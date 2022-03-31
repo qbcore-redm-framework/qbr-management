@@ -1,4 +1,4 @@
-local QBCore = exports['qbr-core']:GetCoreObject()
+
 local PlayerJob = {}
 local shownBossMenu = false
 
@@ -33,12 +33,12 @@ end
 AddEventHandler('onResourceStart', function(resource)--if you restart the resource
     if resource == GetCurrentResourceName() then
         Wait(200)
-        PlayerJob = QBCore.Functions.GetPlayerData().job
+        PlayerJob = exports['qbr-core']:GetPlayerData().job
     end
 end)
 
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
-    PlayerJob = QBCore.Functions.GetPlayerData().job
+    PlayerJob = exports['qbr-core']:GetPlayerData().job
 end)
 
 RegisterNetEvent('QBCore:Client:OnJobUpdate', function(JobInfo)
@@ -104,7 +104,7 @@ RegisterNetEvent('qbr-bossmenu:client:employeelist', function()
             isMenuHeader = true,
         },
     }
-    QBCore.Functions.TriggerCallback('qbr-bossmenu:server:GetEmployees', function(cb)
+    exports['qbr-core']:TriggerCallback('qbr-bossmenu:server:GetEmployees', function(cb)
         for _, v in pairs(cb) do
             EmployeesMenu[#EmployeesMenu + 1] = {
                 header = v.name,
@@ -186,7 +186,7 @@ RegisterNetEvent('qbr-bossmenu:client:HireMenu', function()
             isMenuHeader = true,
         },
     }
-    QBCore.Functions.TriggerCallback('qbr-bossmenu:getplayers', function(players)
+    exports['qbr-core']:TriggerCallback('qbr-bossmenu:getplayers', function(players)
         for _, v in pairs(players) do
             if v and v ~= PlayerId() then
                 HireMenu[#HireMenu + 1] = {
@@ -211,7 +211,7 @@ RegisterNetEvent('qbr-bossmenu:client:HireMenu', function()
 end)
 
 RegisterNetEvent('qbr-bossmenu:client:SocietyMenu', function()
-    QBCore.Functions.TriggerCallback('qbr-bossmenu:server:GetAccount', function(cb)
+    exports['qbr-core']:TriggerCallback('qbr-bossmenu:server:GetAccount', function(cb)
         local SocietyMenu = {
             {
                 header = "Balance: $" .. comma_value(cb) .. " - " .. string.upper(PlayerJob.label),
@@ -301,7 +301,7 @@ CreateThread(function()
                             TriggerEvent("qbr-bossmenu:client:OpenMenu")
                         end
                     end
-                    
+
                     if not nearBossmenu and shownBossMenu then
                         CloseMenuFull()
                         shownBossMenu = false

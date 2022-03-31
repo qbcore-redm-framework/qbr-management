@@ -1,4 +1,4 @@
-local QBCore = exports['qbr-core']:GetCoreObject()
+
 local GangaccountGangs = {}
 
 CreateThread(function()
@@ -18,7 +18,7 @@ end)
 
 RegisterNetEvent("qbr-gangmenu:server:withdrawMoney", function(amount)
 	local src = source
-	local xPlayer = QBCore.Functions.GetPlayer(src)
+	local xPlayer = exports['qbr-core']:GetPlayer(src)
 	local gang = xPlayer.PlayerData.gang.name
 
 	if not GangaccountGangs[gang] then
@@ -42,7 +42,7 @@ end)
 
 RegisterNetEvent("qbr-gangmenu:server:depositMoney", function(amount)
 	local src = source
-	local xPlayer = QBCore.Functions.GetPlayer(src)
+	local xPlayer = exports['qbr-core']:GetPlayer(src)
 	local gang = xPlayer.PlayerData.gang.name
 
 	if not GangaccountGangs[gang] then
@@ -84,7 +84,7 @@ RegisterNetEvent("qbr-gangmenu:server:removeaccountGangMoney", function(accountG
 	MySQL.Async.execute('UPDATE management_menu SET amount = ? WHERE job_name = ? AND menu_type = "gang"', { GangaccountGangs[accountGang], accountGang })
 end)
 
-QBCore.Functions.CreateCallback('qbr-gangmenu:server:GetAccount', function(source, cb, GangName)
+exports['qbr-core']:CreateCallback('qbr-gangmenu:server:GetAccount', function(source, cb, GangName)
 	local gangmoney = GetaccountGang(GangName)
 	cb(gangmoney)
 end)
@@ -95,7 +95,7 @@ function GetaccountGang(accountGang)
 end
 
 -- Get Employees
-QBCore.Functions.CreateCallback('qbr-gangmenu:server:GetEmployees', function(source, cb, gangname)
+exports['qbr-core']:CreateCallback('qbr-gangmenu:server:GetEmployees', function(source, cb, gangname)
 	local src = source
 	local employees = {}
 	if not GangaccountGangs[gangname] then
@@ -104,7 +104,7 @@ QBCore.Functions.CreateCallback('qbr-gangmenu:server:GetEmployees', function(sou
 	local players = MySQL.Sync.fetchAll("SELECT * FROM `players` WHERE `gang` LIKE '%".. gangname .."%'", {})
 	if players[1] ~= nil then
 		for key, value in pairs(players) do
-			local isOnline = QBCore.Functions.GetPlayerByCitizenId(value.citizenid)
+			local isOnline = exports['qbr-core']:GetPlayerByCitizenId(value.citizenid)
 
 			if isOnline then
 				employees[#employees+1] = {
@@ -129,8 +129,8 @@ end)
 -- Grade Change
 RegisterNetEvent('qbr-gangmenu:server:GradeUpdate', function(data)
 	local src = source
-	local Player = QBCore.Functions.GetPlayer(src)
-	local Employee = QBCore.Functions.GetPlayerByCitizenId(data.cid)
+	local Player = exports['qbr-core']:GetPlayer(src)
+	local Employee = exports['qbr-core']:GetPlayerByCitizenId(data.cid)
 	if Employee then
 		if Employee.Functions.SetGang(Player.PlayerData.gang.name, data.grado) then
 			TriggerClientEvent('QBCore:Notify', src, "Successfully promoted!", "success")
@@ -147,8 +147,8 @@ end)
 -- Fire Member
 RegisterNetEvent('qbr-gangmenu:server:FireMember', function(target)
 	local src = source
-	local Player = QBCore.Functions.GetPlayer(src)
-	local Employee = QBCore.Functions.GetPlayerByCitizenId(target)
+	local Player = exports['qbr-core']:GetPlayer(src)
+	local Employee = exports['qbr-core']:GetPlayerByCitizenId(target)
 	if Employee then
 		if target ~= Player.PlayerData.citizenid then
 			if Employee.Functions.SetGang("none", '0') then
@@ -187,8 +187,8 @@ end)
 -- Recruit Player
 RegisterNetEvent('qbr-gangmenu:server:HireMember', function(recruit)
 	local src = source
-	local Player = QBCore.Functions.GetPlayer(src)
-	local Target = QBCore.Functions.GetPlayer(recruit)
+	local Player = exports['qbr-core']:GetPlayer(src)
+	local Target = exports['qbr-core']:GetPlayer(recruit)
 	if Player.PlayerData.gang.isboss == true then
 		if Target and Target.Functions.SetGang(Player.PlayerData.gang.name, 0) then
 			TriggerClientEvent('QBCore:Notify', src, "You hired " .. (Target.PlayerData.charinfo.firstname .. ' ' .. Target.PlayerData.charinfo.lastname) .. " come " .. Player.PlayerData.gang.label .. "", "success")
@@ -200,17 +200,17 @@ RegisterNetEvent('qbr-gangmenu:server:HireMember', function(recruit)
 end)
 
 -- Get closest player sv
-QBCore.Functions.CreateCallback('qbr-gangmenu:getplayers', function(source, cb)
+exports['qbr-core']:CreateCallback('qbr-gangmenu:getplayers', function(source, cb)
 	local src = source
 	local players = {}
 	local PlayerPed = GetPlayerPed(src)
 	local pCoords = GetEntityCoords(PlayerPed)
-	for k, v in pairs(QBCore.Functions.GetPlayers()) do
+	for k, v in pairs(exports['qbr-core']:GetPlayers()) do
 		local targetped = GetPlayerPed(v)
 		local tCoords = GetEntityCoords(targetped)
 		local dist = #(pCoords - tCoords)
 		if PlayerPed ~= targetped and dist < 10 then
-			local ped = QBCore.Functions.GetPlayer(v)
+			local ped = exports['qbr-core']:GetPlayer(v)
 			players[#players+1] = {
 			id = v,
 			coords = GetEntityCoords(targetped),

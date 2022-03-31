@@ -1,4 +1,4 @@
-local QBCore = exports['qbr-core']:GetCoreObject()
+
 local PlayerGang = {}
 local shownGangMenu = false
 
@@ -38,12 +38,12 @@ end
 AddEventHandler('onResourceStart', function(resource)--if you restart the resource
     if resource == GetCurrentResourceName() then
         Wait(200)
-        PlayerGang = QBCore.Functions.GetPlayerData().gang
+        PlayerGang = exports['qbr-core']:GetPlayerData().gang
     end
 end)
 
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
-    PlayerGang = QBCore.Functions.GetPlayerData().gang
+    PlayerGang = exports['qbr-core']:GetPlayerData().gang
 end)
 
 RegisterNetEvent('QBCore:Client:OnGangUpdate', function(InfoGang)
@@ -121,7 +121,7 @@ RegisterNetEvent('qbr-gangmenu:client:ManageGang', function()
             isMenuHeader = true,
         },
     }
-    QBCore.Functions.TriggerCallback('qbr-gangmenu:server:GetEmployees', function(cb)
+    exports['qbr-core']:TriggerCallback('qbr-gangmenu:server:GetEmployees', function(cb)
         for _, v in pairs(cb) do
             GangMembersMenu[#GangMembersMenu + 1] = {
                 header = v.name,
@@ -191,7 +191,7 @@ RegisterNetEvent('qbr-gangmenu:client:HireMembers', function()
             isMenuHeader = true,
         },
     }
-    QBCore.Functions.TriggerCallback('qbr-gangmenu:getplayers', function(players)
+    exports['qbr-core']:TriggerCallback('qbr-gangmenu:getplayers', function(players)
         for _, v in pairs(players) do
             if v and v ~= PlayerId() then
                 HireMembersMenu[#HireMembersMenu + 1] = {
@@ -216,7 +216,7 @@ RegisterNetEvent('qbr-gangmenu:client:HireMembers', function()
 end)
 
 RegisterNetEvent('qbr-gangmenu:client:SocietyMenu', function()
-    QBCore.Functions.TriggerCallback('qbr-gangmenu:server:GetAccount', function(cb)
+    exports['qbr-core']:TriggerCallback('qbr-gangmenu:server:GetAccount', function(cb)
         local SocietyMenu = {
             {
                 header = "Balance: $" .. comma_valueGang(cb) .. " - " .. string.upper(PlayerGang.label),
@@ -304,7 +304,7 @@ CreateThread(function()
                             TriggerEvent("qbr-gangmenu:client:OpenMenu")
                         end
                     end
-                    
+
                     if not nearGangmenu and shownGangMenu then
                         CloseMenuFullGang()
                         shownGangMenu = false

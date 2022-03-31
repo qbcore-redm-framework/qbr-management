@@ -1,4 +1,4 @@
-local QBCore = exports['qbr-core']:GetCoreObject()
+
 local Accounts = {}
 
 CreateThread(function()
@@ -18,7 +18,7 @@ end)
 
 RegisterNetEvent("qbr-bossmenu:server:withdrawMoney", function(amount)
 	local src = source
-	local xPlayer = QBCore.Functions.GetPlayer(src)
+	local xPlayer = exports['qbr-core']:GetPlayer(src)
 	local job = xPlayer.PlayerData.job.name
 
 	if not Accounts[job] then
@@ -33,7 +33,7 @@ RegisterNetEvent("qbr-bossmenu:server:withdrawMoney", function(amount)
 		TriggerClientEvent('qbr-bossmenu:client:OpenMenu', src)
 		return
 	end
-	
+
 	MySQL.Async.execute('UPDATE management_menu SET amount = ? WHERE job_name = ? AND menu_type = "boss"', { Accounts[job], job})
 	TriggerEvent('qbr-log:server:CreateLog', 'bossmenu', 'Withdraw Money', "blue", xPlayer.PlayerData.name.. "Withdrawal $" .. amount .. ' (' .. job .. ')', true)
 	TriggerClientEvent('QBCore:Notify', src, "You have withdrawn: $" ..amount, "success")
@@ -42,7 +42,7 @@ end)
 
 RegisterNetEvent("qbr-bossmenu:server:depositMoney", function(amount)
 	local src = source
-	local xPlayer = QBCore.Functions.GetPlayer(src)
+	local xPlayer = exports['qbr-core']:GetPlayer(src)
 	local job = xPlayer.PlayerData.job.name
 
 	if not Accounts[job] then
@@ -62,7 +62,7 @@ RegisterNetEvent("qbr-bossmenu:server:depositMoney", function(amount)
 	TriggerClientEvent('QBCore:Notify', src, "You have deposited: $" ..amount, "success")
 	TriggerClientEvent('qbr-bossmenu:client:OpenMenu', src)
 end)
- 
+
 RegisterNetEvent("qbr-bossmenu:server:addAccountMoney", function(account, amount)
 	if not Accounts[account] then
 		Accounts[account] = 0
@@ -84,7 +84,7 @@ RegisterNetEvent("qbr-bossmenu:server:removeAccountMoney", function(account, amo
 	MySQL.Async.execute('UPDATE management_menu SET amount = ? WHERE job_name = ? AND menu_type = "boss"', { Accounts[account], account })
 end)
 
-QBCore.Functions.CreateCallback('qbr-bossmenu:server:GetAccount', function(source, cb, jobname)
+exports['qbr-core']:CreateCallback('qbr-bossmenu:server:GetAccount', function(source, cb, jobname)
 	local result = GetAccount(jobname)
 	cb(result)
 end)
@@ -95,7 +95,7 @@ function GetAccount(account)
 end
 
 -- Get Employees
-QBCore.Functions.CreateCallback('qbr-bossmenu:server:GetEmployees', function(source, cb, jobname)
+exports['qbr-core']:CreateCallback('qbr-bossmenu:server:GetEmployees', function(source, cb, jobname)
 	local src = source
 	local employees = {}
 	if not Accounts[jobname] then
@@ -104,18 +104,18 @@ QBCore.Functions.CreateCallback('qbr-bossmenu:server:GetEmployees', function(sou
 	local players = MySQL.Sync.fetchAll("SELECT * FROM `players` WHERE `job` LIKE '%".. jobname .."%'", {})
 	if players[1] ~= nil then
 		for key, value in pairs(players) do
-			local isOnline = QBCore.Functions.GetPlayerByCitizenId(value.citizenid)
+			local isOnline = exports['qbr-core']:GetPlayerByCitizenId(value.citizenid)
 
 			if isOnline then
 				employees[#employees+1] = {
-				empSource = isOnline.PlayerData.citizenid, 
+				empSource = isOnline.PlayerData.citizenid,
 				grade = isOnline.PlayerData.job.grade,
 				isboss = isOnline.PlayerData.job.isboss,
 				name = '🟢 ' .. isOnline.PlayerData.charinfo.firstname .. ' ' .. isOnline.PlayerData.charinfo.lastname
 				}
 			else
 				employees[#employees+1] = {
-				empSource = value.citizenid, 
+				empSource = value.citizenid,
 				grade =  json.decode(value.job).grade,
 				isboss = json.decode(value.job).isboss,
 				name = '❌ ' ..  json.decode(value.charinfo).firstname .. ' ' .. json.decode(value.charinfo).lastname
@@ -132,8 +132,8 @@ end)
 -- Grade Change
 RegisterNetEvent('qbr-bossmenu:server:GradeUpdate', function(data)
 	local src = source
-	local Player = QBCore.Functions.GetPlayer(src)
-	local Employee = QBCore.Functions.GetPlayerByCitizenId(data.cid)
+	local Player = exports['qbr-core']:GetPlayer(src)
+	local Employee = exports['qbr-core']:GetPlayerByCitizenId(data.cid)
 	if Employee then
 		if Employee.Functions.SetJob(Player.PlayerData.job.name, data.grado) then
 			TriggerClientEvent('QBCore:Notify', src, "Sucessfulluy promoted!", "success")
@@ -150,8 +150,8 @@ end)
 -- Fire Employee
 RegisterNetEvent('qbr-bossmenu:server:FireEmployee', function(target)
 	local src = source
-	local Player = QBCore.Functions.GetPlayer(src)
-	local Employee = QBCore.Functions.GetPlayerByCitizenId(target)
+	local Player = exports['qbr-core']:GetPlayer(src)
+	local Employee = exports['qbr-core']:GetPlayerByCitizenId(target)
 	if Employee then
 		if target ~= Player.PlayerData.citizenid then
 			if Employee.Functions.SetJob("unemployed", '0') then
@@ -190,8 +190,8 @@ end)
 -- Recruit Player
 RegisterNetEvent('qbr-bossmenu:server:HireEmployee', function(recruit)
 	local src = source
-	local Player = QBCore.Functions.GetPlayer(src)
-	local Target = QBCore.Functions.GetPlayer(recruit)
+	local Player = exports['qbr-core']:GetPlayer(src)
+	local Target = exports['qbr-core']:GetPlayer(recruit)
 	if Player.PlayerData.job.isboss == true then
 		if Target and Target.Functions.SetJob(Player.PlayerData.job.name, 0) then
 			TriggerClientEvent('QBCore:Notify', src, "You hired " .. (Target.PlayerData.charinfo.firstname .. ' ' .. Target.PlayerData.charinfo.lastname) .. " come " .. Player.PlayerData.job.label .. "", "success")
@@ -203,17 +203,17 @@ RegisterNetEvent('qbr-bossmenu:server:HireEmployee', function(recruit)
 end)
 
 -- Get closest player sv
-QBCore.Functions.CreateCallback('qbr-bossmenu:getplayers', function(source, cb)
+exports['qbr-core']:CreateCallback('qbr-bossmenu:getplayers', function(source, cb)
 	local src = source
 	local players = {}
 	local PlayerPed = GetPlayerPed(src)
 	local pCoords = GetEntityCoords(PlayerPed)
-	for k, v in pairs(QBCore.Functions.GetPlayers()) do
+	for k, v in pairs(exports['qbr-core']:GetPlayers()) do
 		local targetped = GetPlayerPed(v)
 		local tCoords = GetEntityCoords(targetped)
 		local dist = #(pCoords - tCoords)
 		if PlayerPed ~= targetped and dist < 10 then
-			local ped = QBCore.Functions.GetPlayer(v)
+			local ped = exports['qbr-core']:GetPlayer(v)
 			players[#players+1] = {
 			id = v,
 			coords = GetEntityCoords(targetped),
