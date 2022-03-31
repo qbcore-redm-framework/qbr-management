@@ -1,4 +1,4 @@
-
+local sharedJobs = exports['qbr-core']:GetJobs()
 local PlayerJob = {}
 local shownBossMenu = false
 
@@ -135,7 +135,7 @@ RegisterNetEvent('qbr-bossmenu:client:ManageEmployee', function(data)
             isMenuHeader = true,
         },
     }
-    for k, v in pairs(QBCore.Shared.Jobs[data.work.name].grades) do
+    for k, v in pairs(sharedJobs[data.work.name].grades) do
         EmployeeMenu[#EmployeeMenu + 1] = {
             header = v.name,
             txt = "Grade: " .. k,

@@ -1,4 +1,4 @@
-
+local sharedGangs = exports['qbr-core']:GetGangs()
 local PlayerGang = {}
 local shownGangMenu = false
 
@@ -152,7 +152,7 @@ RegisterNetEvent('qbr-gangmenu:lient:ManageMember', function(data)
             isMenuHeader = true,
         },
     }
-    for k, v in pairs(QBCore.Shared.Gangs[data.work.name].grades) do
+    for k, v in pairs(sharedGangs[data.work.name].grades) do
         MemberMenu[#MemberMenu + 1] = {
             header = v.name,
             txt = "Grade: " .. k,
