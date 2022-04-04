@@ -29,14 +29,14 @@ RegisterNetEvent("qbr-gangmenu:server:withdrawMoney", function(amount)
 		GangaccountGangs[gang] = GangaccountGangs[gang] - amount
 		xPlayer.Functions.AddMoney("cash", amount, 'Boss menu withdraw')
 	else
-		TriggerClientEvent('QBCore:Notify', src, "Invalid amount!", "error")
+		TriggerClientEvent('QBCore:Notify', src, 9, "Invalid amount!", 2000, 0, 'mp_lobby_textures', 'cross')
 		TriggerClientEvent('qbr-gangmenu:client:OpenMenu', src)
 		return
 	end
 
 	MySQL.Async.execute('UPDATE management_menu SET amount = ? WHERE job_name = ? AND menu_type = "gang"', { GangaccountGangs[gang], gang })
 	TriggerEvent('qbr-log:server:CreateLog', 'gangmenu', 'Withdraw Money', 'yellow', xPlayer.PlayerData.charinfo.firstname .. ' ' .. xPlayer.PlayerData.charinfo.lastname .. ' successfully withdrew $' .. amount .. ' (' .. gang .. ')', false)
-	TriggerClientEvent('QBCore:Notify', src, "You have withdrawn: $" ..amount, "success")
+	TriggerClientEvent('QBCore:Notify', src, 9, "You have withdrawn: $" ..amount, 2000, 0, 'hud_textures', 'check')
 	TriggerClientEvent('qbr-gangmenu:client:OpenMenu', src)
 end)
 
@@ -52,14 +52,14 @@ RegisterNetEvent("qbr-gangmenu:server:depositMoney", function(amount)
 	if xPlayer.Functions.RemoveMoney("cash", amount) then
 		GangaccountGangs[gang] = GangaccountGangs[gang] + amount
 	else
-		TriggerClientEvent('QBCore:Notify', src, "Invalid amount!", "error")
+		TriggerClientEvent('QBCore:Notify', src, 9, "Invalid amount!", 2000, 0, 'mp_lobby_textures', 'cross')
 		TriggerClientEvent('qbr-gangmenu:client:OpenMenu', src)
 		return
 	end
 
 	MySQL.Async.execute('UPDATE management_menu SET amount = ? WHERE job_name = ? AND menu_type = "gang"', { GangaccountGangs[gang], gang })
 	TriggerEvent('qbr-log:server:CreateLog', 'gangmenu', 'Deposit Money', 'yellow', xPlayer.PlayerData.charinfo.firstname .. ' ' .. xPlayer.PlayerData.charinfo.lastname .. ' successfully deposited $' .. amount .. ' (' .. gang .. ')', false)
-	TriggerClientEvent('QBCore:Notify', src, "You have deposited: $" ..amount, "success")
+	TriggerClientEvent('QBCore:Notify', src, 9, "You have deposited: $" ..amount, 2000, 0, 'hud_textures', 'check')
 	TriggerClientEvent('qbr-gangmenu:client:OpenMenu', src)
 end)
 
@@ -133,13 +133,13 @@ RegisterNetEvent('qbr-gangmenu:server:GradeUpdate', function(data)
 	local Employee = exports['qbr-core']:GetPlayerByCitizenId(data.cid)
 	if Employee then
 		if Employee.Functions.SetGang(Player.PlayerData.gang.name, data.grado) then
-			TriggerClientEvent('QBCore:Notify', src, "Successfully promoted!", "success")
-			TriggerClientEvent('QBCore:Notify', Employee.PlayerData.source, "You have been promoted to " ..data.nomegrado..".", "success")
+			TriggerClientEvent('QBCore:Notify', src, 9, "Successfully promoted!", 2000, 0, 'hud_textures', 'check')
+			TriggerClientEvent('QBCore:Notify', Employee.PlayerData.source, "You have been promoted to " ..data.nomegrado..".", 2000, 0, 'hud_textures', 'check')
 		else
-			TriggerClientEvent('QBCore:Notify', src, "Grade does not exist.", "error")
+			TriggerClientEvent('QBCore:Notify', src, 9, "Grade does not exist.", 2000, 0, 'mp_lobby_textures', 'cross')
 		end
 	else
-		TriggerClientEvent('QBCore:Notify', src, "Civilian is not in city.", "error")
+		TriggerClientEvent('QBCore:Notify', src, 9, "Civilian is not in city.", 2000, 0, 'mp_lobby_textures', 'cross')
 	end
 	TriggerClientEvent('qbr-gangmenu:client:OpenMenu', src)
 end)
@@ -153,13 +153,13 @@ RegisterNetEvent('qbr-gangmenu:server:FireMember', function(target)
 		if target ~= Player.PlayerData.citizenid then
 			if Employee.Functions.SetGang("none", '0') then
 				TriggerEvent("qbr-log:server:CreateLog", "gangmenu", "Gang Fire", "orange", Player.PlayerData.charinfo.firstname .. " " .. Player.PlayerData.charinfo.lastname .. ' successfully fired ' .. Employee.PlayerData.charinfo.firstname .. " " .. Employee.PlayerData.charinfo.lastname .. " (" .. Player.PlayerData.gang.name .. ")", false)
-				TriggerClientEvent('QBCore:Notify', src, "Gang Member fired!", "success")
-				TriggerClientEvent('QBCore:Notify', Employee.PlayerData.source , "You have been expelled from the gang!", "error")
+				TriggerClientEvent('QBCore:Notify', src, 9, "Gang Member fired!", 2000, 0, 'hud_textures', 'check')
+				TriggerClientEvent('QBCore:Notify', Employee.PlayerData.source , "You have been expelled from the gang!", 2000, 0, 'mp_lobby_textures', 'cross')
 			else
-				TriggerClientEvent('QBCore:Notify', src, "Error.", "error")
+				TriggerClientEvent('QBCore:Notify', src, 9, "Error.", 2000, 0, 'mp_lobby_textures', 'cross')
 			end
 		else
-			TriggerClientEvent('QBCore:Notify', src, "You can\'t kick yourself out of the gang!", "error")
+			TriggerClientEvent('QBCore:Notify', src, 9, "You can\'t kick yourself out of the gang!", 2000, 0, 'mp_lobby_textures', 'cross')
 		end
 	else
 		local player = MySQL.Sync.fetchAll('SELECT * FROM players WHERE citizenid = ? LIMIT 1', {target})
@@ -175,10 +175,10 @@ RegisterNetEvent('qbr-gangmenu:server:FireMember', function(target)
 			gang.grade.name = nil
 			gang.grade.level = 0
 			MySQL.Async.execute('UPDATE players SET gang = ? WHERE citizenid = ?', {json.encode(gang), target})
-			TriggerClientEvent('QBCore:Notify', src, "Gang member fired!", "success")
+			TriggerClientEvent('QBCore:Notify', src, 9, "Gang member fired!", 2000, 0, 'hud_textures', 'check')
 			TriggerEvent("qbr-log:server:CreateLog", "gangmenu", "Gang Fire", "orange", Player.PlayerData.charinfo.firstname .. " " .. Player.PlayerData.charinfo.lastname .. ' successfully fired ' .. Employee.PlayerData.charinfo.firstname .. " " .. Employee.PlayerData.charinfo.lastname .. " (" .. Player.PlayerData.gang.name .. ")", false)
 		else
-			TriggerClientEvent('QBCore:Notify', src, "Civilian is not in city.", "error")
+			TriggerClientEvent('QBCore:Notify', src, 9, "Civilian is not in city.", 2000, 0, 'mp_lobby_textures', 'cross')
 		end
 	end
 	TriggerClientEvent('qbr-gangmenu:client:OpenMenu', src)
@@ -191,8 +191,8 @@ RegisterNetEvent('qbr-gangmenu:server:HireMember', function(recruit)
 	local Target = exports['qbr-core']:GetPlayer(recruit)
 	if Player.PlayerData.gang.isboss == true then
 		if Target and Target.Functions.SetGang(Player.PlayerData.gang.name, 0) then
-			TriggerClientEvent('QBCore:Notify', src, "You hired " .. (Target.PlayerData.charinfo.firstname .. ' ' .. Target.PlayerData.charinfo.lastname) .. " come " .. Player.PlayerData.gang.label .. "", "success")
-			TriggerClientEvent('QBCore:Notify', Target.PlayerData.source , "You have been hired as " .. Player.PlayerData.gang.label .. "", "success")
+			TriggerClientEvent('QBCore:Notify', src, 9, "You hired " .. (Target.PlayerData.charinfo.firstname .. ' ' .. Target.PlayerData.charinfo.lastname) .. " come " .. Player.PlayerData.gang.label .. "", 2000, 0, 'hud_textures', 'check')
+			TriggerClientEvent('QBCore:Notify', Target.PlayerData.source , "You have been hired as " .. Player.PlayerData.gang.label .. "", 2000, 0, 'hud_textures', 'check')
 			TriggerEvent('qbr-log:server:CreateLog', 'gangmenu', 'Recruit', 'yellow', (Player.PlayerData.charinfo.firstname .. ' ' .. Player.PlayerData.charinfo.lastname).. ' successfully recruited ' .. Target.PlayerData.charinfo.firstname .. ' ' .. Target.PlayerData.charinfo.lastname .. ' (' .. Player.PlayerData.gang.name .. ')', false)
 		end
 	end
