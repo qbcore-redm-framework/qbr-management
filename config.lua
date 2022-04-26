@@ -12,9 +12,14 @@ Config.Jobs = {
 }
 
 Config.Gangs = {
-    ['lostmc'] = vector3(0, 0, 0),
-    ['ballas'] = vector3(0,0, 0),
-    ['vagos'] = vector3(0, 0, 0),
-    ['cartel'] = vector3(0, 0, 0),
-    ['families'] = vector3(0, 0, 0)
+    ['odriscoll'] = vector3(0, 0, 0),
+    ['lemoyne'] = vector3(0,0, 0),
+    ['murfree'] = vector3(0, 0, 0),
+    ['skinner'] = vector3(0, 0, 0),
+    ['laramie'] = vector3(0, 0, 0),
+    ['dellobo'] = vector3(0,0, 0),
+    ['night'] = vector3(0, 0, 0),
+    ['foreman'] = vector3(0, 0, 0),
+    ['anderson'] = vector3(0, 0, 0),
+    ['watson'] = vector3(0, 0, 0)
 }
