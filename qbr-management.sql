@@ -20,8 +20,8 @@ INSERT INTO `management_menu` (`job_name`, `amount`, `menu_type`) VALUES
 ('murfree', 0, 'gang'),
 ('skinner', 0, 'gang'),
 ('laramie', 0, 'gang'),
-('dellobo', 0, 'gang');
-('night', 0, 'gang');
-('foreman', 0, 'gang');
-('anderson', 0, 'gang');
+('dellobo', 0, 'gang'),
+('night', 0, 'gang'),
+('foreman', 0, 'gang'),
+('anderson', 0, 'gang'),
 ('watson', 0, 'gang');
