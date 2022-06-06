@@ -29,14 +29,14 @@ RegisterNetEvent("qbr-bossmenu:server:withdrawMoney", function(amount)
 		Accounts[job] = Accounts[job] - amount
 		xPlayer.Functions.AddMoney("cash", amount)
 	else
-		TriggerClientEvent('QBCore:Notify', src, 9, "Invalid Amount!", 2000, 0, 'mp_lobby_textures', 'cross')
+		TriggerClientEvent('QBCore:Notify', src, 9, "Invalid Amount!", 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
 		TriggerClientEvent('qbr-bossmenu:client:OpenMenu', src)
 		return
 	end
 
 	MySQL.Async.execute('UPDATE management_menu SET amount = ? WHERE job_name = ? AND menu_type = "boss"', { Accounts[job], job})
 	TriggerEvent('qbr-log:server:CreateLog', 'bossmenu', 'Withdraw Money', "blue", xPlayer.PlayerData.name.. "Withdrawal $" .. amount .. ' (' .. job .. ')', true)
-	TriggerClientEvent('QBCore:Notify', src, 9, "You have withdrawn: $" ..amount, 2000, 0, 'hud_textures', 'check')
+	TriggerClientEvent('QBCore:Notify', src, 9, "You have withdrawn: $" ..amount, 5000, 0, 'hud_textures', 'check', 'COLOR_WHITE')
 	TriggerClientEvent('qbr-bossmenu:client:OpenMenu', src)
 end)
 
@@ -59,7 +59,7 @@ RegisterNetEvent("qbr-bossmenu:server:depositMoney", function(amount)
 
 	MySQL.Async.execute('UPDATE management_menu SET amount = ? WHERE job_name = ? AND menu_type = "boss"', { Accounts[job], job })
 	TriggerEvent('qbr-log:server:CreateLog', 'bossmenu', 'Deposit Money', "blue", xPlayer.PlayerData.name.. "Deposit $" .. amount .. ' (' .. job .. ')', true)
-	TriggerClientEvent('QBCore:Notify', src, 9, "You have deposited: $" ..amount, 2000, 0, 'hud_textures', 'check')
+	TriggerClientEvent('QBCore:Notify', src, 9, "You have deposited: $" ..amount, 5000, 0, 'hud_textures', 'check', 'COLOR_WHITE')
 	TriggerClientEvent('qbr-bossmenu:client:OpenMenu', src)
 end)
 
@@ -136,13 +136,13 @@ RegisterNetEvent('qbr-bossmenu:server:GradeUpdate', function(data)
 	local Employee = exports['qbr-core']:GetPlayerByCitizenId(data.cid)
 	if Employee then
 		if Employee.Functions.SetJob(Player.PlayerData.job.name, data.grado) then
-			TriggerClientEvent('QBCore:Notify', src, 9, "Sucessfulluy promoted!", 2000, 0, 'hud_textures', 'check')
+			TriggerClientEvent('QBCore:Notify', src, 9, "Sucessfulluy promoted!", 5000, 0, 'hud_textures', 'check', 'COLOR_WHITE')
 			TriggerClientEvent('QBCore:Notify', Employee.PlayerData.source, "You have been promoted to" ..data.nomegrado..".", 2000, 0, 'hud_textures', 'check')
 		else
-			TriggerClientEvent('QBCore:Notify', src, 9, "Promotion grade does not exist.", 2000, 0, 'mp_lobby_textures', 'cross')
+			TriggerClientEvent('QBCore:Notify', src, 9, "Promotion grade does not exist.", 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
 		end
 	else
-		TriggerClientEvent('QBCore:Notify', src, 9, "Civilian not in city.", 2000, 0, 'mp_lobby_textures', 'cross')
+		TriggerClientEvent('QBCore:Notify', src, 9, "Civilian not in city.", 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
 	end
 	TriggerClientEvent('qbr-bossmenu:client:OpenMenu', src)
 end)
@@ -156,13 +156,13 @@ RegisterNetEvent('qbr-bossmenu:server:FireEmployee', function(target)
 		if target ~= Player.PlayerData.citizenid then
 			if Employee.Functions.SetJob("unemployed", '0') then
 				TriggerEvent("qbr-log:server:CreateLog", "bossmenu", "Job Fire", "red", Player.PlayerData.charinfo.firstname .. " " .. Player.PlayerData.charinfo.lastname .. ' successfully fired ' .. Employee.PlayerData.charinfo.firstname .. " " .. Employee.PlayerData.charinfo.lastname .. " (" .. Player.PlayerData.job.name .. ")", false)
-				TriggerClientEvent('QBCore:Notify', src, 9, "Employee fired!", 2000, 0, 'hud_textures', 'check')
-				TriggerClientEvent('QBCore:Notify', Employee.PlayerData.source , "You have been fired! Good luck.", 2000, 0, 'mp_lobby_textures', 'cross')
+				TriggerClientEvent('QBCore:Notify', src, 9, "Employee fired!", 5000, 0, 'hud_textures', 'check', 'COLOR_WHITE')
+				TriggerClientEvent('QBCore:Notify', Employee.PlayerData.source , "You have been fired! Good luck.", 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
 			else
-				TriggerClientEvent('QBCore:Notify', src, 9, "Error..", 2000, 0, 'mp_lobby_textures', 'cross')
+				TriggerClientEvent('QBCore:Notify', src, 9, "Error..", 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
 			end
 		else
-			TriggerClientEvent('QBCore:Notify', src, 9, "You can\'t fire yourself", 2000, 0, 'mp_lobby_textures', 'cross')
+			TriggerClientEvent('QBCore:Notify', src, 9, "You can\'t fire yourself", 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
 		end
 	else
 		local player = MySQL.Sync.fetchAll('SELECT * FROM players WHERE citizenid = ? LIMIT 1', { target })
@@ -181,7 +181,7 @@ RegisterNetEvent('qbr-bossmenu:server:FireEmployee', function(target)
 			TriggerClientEvent('QBCore:Notify', src, 9, "Employee fired!", 2000, 0, 'hud_textures', 'check')
 			TriggerEvent("qbr-log:server:CreateLog", "bossmenu", "Job Fire", "red", Player.PlayerData.charinfo.firstname .. " " .. Player.PlayerData.charinfo.lastname .. ' successfully fired ' .. Employee.PlayerData.charinfo.firstname .. " " .. Employee.PlayerData.charinfo.lastname .. " (" .. Player.PlayerData.job.name .. ")", false)
 		else
-			TriggerClientEvent('QBCore:Notify', src, 9, "Civilian not in city.", 2000, 0, 'mp_lobby_textures', 'cross')
+			TriggerClientEvent('QBCore:Notify', src, 9, "Civilian not in city.", 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
 		end
 	end
 	TriggerClientEvent('qbr-bossmenu:client:OpenMenu', src)
@@ -194,8 +194,8 @@ RegisterNetEvent('qbr-bossmenu:server:HireEmployee', function(recruit)
 	local Target = exports['qbr-core']:GetPlayer(recruit)
 	if Player.PlayerData.job.isboss == true then
 		if Target and Target.Functions.SetJob(Player.PlayerData.job.name, 0) then
-			TriggerClientEvent('QBCore:Notify', src, 9, "You hired " .. (Target.PlayerData.charinfo.firstname .. ' ' .. Target.PlayerData.charinfo.lastname) .. " come " .. Player.PlayerData.job.label .. "", 2000, 0, 'hud_textures', 'check')
-			TriggerClientEvent('QBCore:Notify', Target.PlayerData.source , "You were hired as " .. Player.PlayerData.job.label .. "", 2000, 0, 'hud_textures', 'check')
+			TriggerClientEvent('QBCore:Notify', src, 9, "You hired " .. (Target.PlayerData.charinfo.firstname .. ' ' .. Target.PlayerData.charinfo.lastname) .. " come " .. Player.PlayerData.job.label .. "", 5000, 0, 'hud_textures', 'check', 'COLOR_WHITE')
+			TriggerClientEvent('QBCore:Notify', Target.PlayerData.source , "You were hired as " .. Player.PlayerData.job.label .. "", 5000, 0, 'hud_textures', 'check', 'COLOR_WHITE')
 			TriggerEvent('qbr-log:server:CreateLog', 'bossmenu', 'Recruit', "lightgreen", (Player.PlayerData.charinfo.firstname .. ' ' .. Player.PlayerData.charinfo.lastname).. " successfully recruited " .. (Target.PlayerData.charinfo.firstname .. ' ' .. Target.PlayerData.charinfo.lastname) .. ' (' .. Player.PlayerData.job.name .. ')', true)
 		end
 	end
