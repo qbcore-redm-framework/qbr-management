@@ -134,7 +134,7 @@ RegisterNetEvent('qbr-gangmenu:server:GradeUpdate', function(data)
 	if Employee then
 		if Employee.Functions.SetGang(Player.PlayerData.gang.name, data.grado) then
 			TriggerClientEvent('QBCore:Notify', src, 9, "Successfully promoted!", 5000, 0, 'hud_textures', 'check', 'COLOR_WHITE')
-			TriggerClientEvent('QBCore:Notify', Employee.PlayerData.source, "You have been promoted to " ..data.nomegrado..".", 5000, 0, 'hud_textures', 'check', 'COLOR_WHITE')
+			TriggerClientEvent('QBCore:Notify', Employee.PlayerData.source, 9, "You have been promoted to " ..data.nomegrado..".", 5000, 0, 'hud_textures', 'check', 'COLOR_WHITE')
 		else
 			TriggerClientEvent('QBCore:Notify', src, 9, "Grade does not exist.", 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
 		end
@@ -154,7 +154,7 @@ RegisterNetEvent('qbr-gangmenu:server:FireMember', function(target)
 			if Employee.Functions.SetGang("none", '0') then
 				TriggerEvent("qbr-log:server:CreateLog", "gangmenu", "Gang Fire", "orange", Player.PlayerData.charinfo.firstname .. " " .. Player.PlayerData.charinfo.lastname .. ' successfully fired ' .. Employee.PlayerData.charinfo.firstname .. " " .. Employee.PlayerData.charinfo.lastname .. " (" .. Player.PlayerData.gang.name .. ")", false)
 				TriggerClientEvent('QBCore:Notify', src, 9, "Gang Member fired!", 5000, 0, 'hud_textures', 'check', 'COLOR_WHITE')
-				TriggerClientEvent('QBCore:Notify', Employee.PlayerData.source , "You have been expelled from the gang!", 2000, 0, 'mp_lobby_textures', 'cross')
+				TriggerClientEvent('QBCore:Notify', Employee.PlayerData.source , 9, "You have been expelled from the gang!", 2000, 0, 'mp_lobby_textures', 'cross')
 			else
 				TriggerClientEvent('QBCore:Notify', src, 9, "Error.", 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
 			end
@@ -192,7 +192,7 @@ RegisterNetEvent('qbr-gangmenu:server:HireMember', function(recruit)
 	if Player.PlayerData.gang.isboss == true then
 		if Target and Target.Functions.SetGang(Player.PlayerData.gang.name, 0) then
 			TriggerClientEvent('QBCore:Notify', src, 9, "You hired " .. (Target.PlayerData.charinfo.firstname .. ' ' .. Target.PlayerData.charinfo.lastname) .. " come " .. Player.PlayerData.gang.label .. "", 5000, 0, 'hud_textures', 'check', 'COLOR_WHITE')
-			TriggerClientEvent('QBCore:Notify', Target.PlayerData.source , "You have been hired as " .. Player.PlayerData.gang.label .. "", 5000, 0, 'hud_textures', 'check', 'COLOR_WHITE')
+			TriggerClientEvent('QBCore:Notify', Target.PlayerData.source , 9, "You have been hired as " .. Player.PlayerData.gang.label .. "", 5000, 0, 'hud_textures', 'check', 'COLOR_WHITE')
 			TriggerEvent('qbr-log:server:CreateLog', 'gangmenu', 'Recruit', 'yellow', (Player.PlayerData.charinfo.firstname .. ' ' .. Player.PlayerData.charinfo.lastname).. ' successfully recruited ' .. Target.PlayerData.charinfo.firstname .. ' ' .. Target.PlayerData.charinfo.lastname .. ' (' .. Player.PlayerData.gang.name .. ')', false)
 		end
 	end
