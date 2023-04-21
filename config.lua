@@ -3,7 +3,7 @@ Config = {}
 Config.Key = 0xCEFD9220 --E
 
 Config.Jobs = {
-    ['police'] = vector3(-328.8274, 784.4441, 116.3731),
+    ['police'] = vector3(2508.42, -1309.01, 48.95),
     ['ambulance'] = vector3(310.1, -599.43, 43.29),
     ['realestate'] = vector3(-124.786, -641.486, 168.820),
     ['taxi'] = vector3(903.32, -170.55, 74.0),
