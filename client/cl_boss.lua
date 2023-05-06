@@ -290,8 +290,6 @@ CreateThread(function()
         local nearBossmenu = false
         for k, v in pairs(Config.Jobs) do
             if k == PlayerJob.name and PlayerJob.isboss then
-                print('1')
-                print(#(pos-v))
                 if #(pos - v) < 5.0 then
                     inRangeBoss = true
                     if #(pos - v) <= 3.0 then
