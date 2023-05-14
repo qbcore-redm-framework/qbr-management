@@ -3,7 +3,7 @@ local GangaccountGangs = {}
 
 CreateThread(function()
 	Wait(500)
-	local gangmenu = MySQL.Sync.fetchAll('SELECT * FROM management_menu WHERE menu_type = "gang"', {})
+	local gangmenu = MySQL.query.await('SELECT * FROM management_menu WHERE menu_type = "gang"', {})
 	if not gangmenu then
 		return
 	end
@@ -34,7 +34,7 @@ RegisterNetEvent("qbr-gangmenu:server:withdrawMoney", function(amount)
 		return
 	end
 
-	MySQL.Async.execute('UPDATE management_menu SET amount = ? WHERE job_name = ? AND menu_type = "gang"', { GangaccountGangs[gang], gang })
+	MySQL.query.await('UPDATE management_menu SET amount = ? WHERE job_name = ? AND menu_type = "gang"', { GangaccountGangs[gang], gang })
 	TriggerEvent('qbr-log:server:CreateLog', 'gangmenu', 'Withdraw Money', 'yellow', xPlayer.PlayerData.charinfo.firstname .. ' ' .. xPlayer.PlayerData.charinfo.lastname .. ' successfully withdrew $' .. amount .. ' (' .. gang .. ')', false)
 	TriggerClientEvent('QBCore:Notify', src, 9, "You have withdrawn: $" ..amount, 5000, 0, 'hud_textures', 'check', 'COLOR_WHITE')
 	TriggerClientEvent('qbr-gangmenu:client:OpenMenu', src)
@@ -57,7 +57,7 @@ RegisterNetEvent("qbr-gangmenu:server:depositMoney", function(amount)
 		return
 	end
 
-	MySQL.Async.execute('UPDATE management_menu SET amount = ? WHERE job_name = ? AND menu_type = "gang"', { GangaccountGangs[gang], gang })
+	MySQL.query.await('UPDATE management_menu SET amount = ? WHERE job_name = ? AND menu_type = "gang"', { GangaccountGangs[gang], gang })
 	TriggerEvent('qbr-log:server:CreateLog', 'gangmenu', 'Deposit Money', 'yellow', xPlayer.PlayerData.charinfo.firstname .. ' ' .. xPlayer.PlayerData.charinfo.lastname .. ' successfully deposited $' .. amount .. ' (' .. gang .. ')', false)
 	TriggerClientEvent('QBCore:Notify', src, 9, "You have deposited: $" ..amount, 5000, 0, 'hud_textures', 'check', 'COLOR_WHITE')
 	TriggerClientEvent('qbr-gangmenu:client:OpenMenu', src)
@@ -69,7 +69,7 @@ RegisterNetEvent("qbr-gangmenu:server:addaccountGangMoney", function(accountGang
 	end
 
 	GangaccountGangs[accountGang] = GangaccountGangs[accountGang] + amount
-	MySQL.Async.execute('UPDATE management_menu SET amount = ? WHERE job_name = ? AND menu_type = "gang"', { GangaccountGangs[accountGang], accountGang })
+	MySQL.query.await('UPDATE management_menu SET amount = ? WHERE job_name = ? AND menu_type = "gang"', { GangaccountGangs[accountGang], accountGang })
 end)
 
 RegisterNetEvent("qbr-gangmenu:server:removeaccountGangMoney", function(accountGang, amount)
@@ -81,7 +81,7 @@ RegisterNetEvent("qbr-gangmenu:server:removeaccountGangMoney", function(accountG
 		GangaccountGangs[accountGang] = GangaccountGangs[accountGang] - amount
 	end
 
-	MySQL.Async.execute('UPDATE management_menu SET amount = ? WHERE job_name = ? AND menu_type = "gang"', { GangaccountGangs[accountGang], accountGang })
+	MySQL.query.await('UPDATE management_menu SET amount = ? WHERE job_name = ? AND menu_type = "gang"', { GangaccountGangs[accountGang], accountGang })
 end)
 
 exports['qbr-core']:CreateCallback('qbr-gangmenu:server:GetAccount', function(source, cb, GangName)
@@ -101,7 +101,7 @@ exports['qbr-core']:CreateCallback('qbr-gangmenu:server:GetEmployees', function(
 	if not GangaccountGangs[gangname] then
 		GangaccountGangs[gangname] = 0
 	end
-	local players = MySQL.Sync.fetchAll("SELECT * FROM `players` WHERE `gang` LIKE '%".. gangname .."%'", {})
+	local players = MySQL.query.await("SELECT * FROM `players` WHERE `gang` LIKE '%".. gangname .."%'", {})
 	if players[1] ~= nil then
 		for key, value in pairs(players) do
 			local isOnline = exports['qbr-core']:GetPlayerByCitizenId(value.citizenid)
@@ -162,7 +162,7 @@ RegisterNetEvent('qbr-gangmenu:server:FireMember', function(target)
 			TriggerClientEvent('QBCore:Notify', src, 9, "You can\'t kick yourself out of the gang!", 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
 		end
 	else
-		local player = MySQL.Sync.fetchAll('SELECT * FROM players WHERE citizenid = ? LIMIT 1', {target})
+		local player = MySQL.query.await('SELECT * FROM players WHERE citizenid = ? LIMIT 1', {target})
 		if player[1] ~= nil then
 			Employee = player[1]
 			local gang = {}
@@ -174,7 +174,7 @@ RegisterNetEvent('qbr-gangmenu:server:FireMember', function(target)
 			gang.grade = {}
 			gang.grade.name = nil
 			gang.grade.level = 0
-			MySQL.Async.execute('UPDATE players SET gang = ? WHERE citizenid = ?', {json.encode(gang), target})
+			MySQL.query.await('UPDATE players SET gang = ? WHERE citizenid = ?', {json.encode(gang), target})
 			TriggerClientEvent('QBCore:Notify', src, 9, "Gang member fired!", 5000, 0, 'hud_textures', 'check', 'COLOR_WHITE')
 			TriggerEvent("qbr-log:server:CreateLog", "gangmenu", "Gang Fire", "orange", Player.PlayerData.charinfo.firstname .. " " .. Player.PlayerData.charinfo.lastname .. ' successfully fired ' .. Employee.PlayerData.charinfo.firstname .. " " .. Employee.PlayerData.charinfo.lastname .. " (" .. Player.PlayerData.gang.name .. ")", false)
 		else

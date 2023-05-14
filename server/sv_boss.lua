@@ -3,7 +3,7 @@ local Accounts = {}
 
 CreateThread(function()
 	Wait(500)
-	local bossmenu = MySQL.Sync.fetchAll('SELECT * FROM management_menu WHERE menu_type = "boss"', {})
+	local bossmenu = MySQL.query.await('SELECT * FROM management_menu WHERE menu_type = "boss"', {})
 	if not bossmenu then
 		return
 	end
@@ -34,7 +34,7 @@ RegisterNetEvent("qbr-bossmenu:server:withdrawMoney", function(amount)
 		return
 	end
 
-	MySQL.Async.execute('UPDATE management_menu SET amount = ? WHERE job_name = ? AND menu_type = "boss"', { Accounts[job], job})
+	MySQL.query.await('UPDATE management_menu SET amount = ? WHERE job_name = ? AND menu_type = "boss"', { Accounts[job], job})
 	TriggerEvent('qbr-log:server:CreateLog', 'bossmenu', 'Withdraw Money', "blue", xPlayer.PlayerData.name.. "Withdrawal $" .. amount .. ' (' .. job .. ')', true)
 	TriggerClientEvent('QBCore:Notify', src, 9, "You have withdrawn: $" ..amount, 5000, 0, 'hud_textures', 'check', 'COLOR_WHITE')
 	TriggerClientEvent('qbr-bossmenu:client:OpenMenu', src)
@@ -57,7 +57,7 @@ RegisterNetEvent("qbr-bossmenu:server:depositMoney", function(amount)
 		return
 	end
 
-	MySQL.Async.execute('UPDATE management_menu SET amount = ? WHERE job_name = ? AND menu_type = "boss"', { Accounts[job], job })
+	MySQL.query.await('UPDATE management_menu SET amount = ? WHERE job_name = ? AND menu_type = "boss"', { Accounts[job], job })
 	TriggerEvent('qbr-log:server:CreateLog', 'bossmenu', 'Deposit Money', "blue", xPlayer.PlayerData.name.. "Deposit $" .. amount .. ' (' .. job .. ')', true)
 	TriggerClientEvent('QBCore:Notify', src, 9, "You have deposited: $" ..amount, 5000, 0, 'hud_textures', 'check', 'COLOR_WHITE')
 	TriggerClientEvent('qbr-bossmenu:client:OpenMenu', src)
@@ -69,7 +69,7 @@ RegisterNetEvent("qbr-bossmenu:server:addAccountMoney", function(account, amount
 	end
 
 	Accounts[account] = Accounts[account] + amount
-	MySQL.Async.execute('UPDATE management_menu SET amount = ? WHERE job_name = ? AND menu_type = "boss"', { Accounts[account], account })
+	MySQL.query.await('UPDATE management_menu SET amount = ? WHERE job_name = ? AND menu_type = "boss"', { Accounts[account], account })
 end)
 
 RegisterNetEvent("qbr-bossmenu:server:removeAccountMoney", function(account, amount)
@@ -81,7 +81,7 @@ RegisterNetEvent("qbr-bossmenu:server:removeAccountMoney", function(account, amo
 		Accounts[account] = Accounts[account] - amount
 	end
 
-	MySQL.Async.execute('UPDATE management_menu SET amount = ? WHERE job_name = ? AND menu_type = "boss"', { Accounts[account], account })
+	MySQL.query.await('UPDATE management_menu SET amount = ? WHERE job_name = ? AND menu_type = "boss"', { Accounts[account], account })
 end)
 
 exports['qbr-core']:CreateCallback('qbr-bossmenu:server:GetAccount', function(source, cb, jobname)
@@ -101,7 +101,7 @@ exports['qbr-core']:CreateCallback('qbr-bossmenu:server:GetEmployees', function(
 	if not Accounts[jobname] then
 		Accounts[jobname] = 0
 	end
-	local players = MySQL.Sync.fetchAll("SELECT * FROM `players` WHERE `job` LIKE '%".. jobname .."%'", {})
+	local players = MySQL.query.await("SELECT * FROM `players` WHERE `job` LIKE '%".. jobname .."%'", {})
 	if players[1] ~= nil then
 		for key, value in pairs(players) do
 			local isOnline = exports['qbr-core']:GetPlayerByCitizenId(value.citizenid)
@@ -165,7 +165,7 @@ RegisterNetEvent('qbr-bossmenu:server:FireEmployee', function(target)
 			TriggerClientEvent('QBCore:Notify', src, 9, "You can\'t fire yourself", 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
 		end
 	else
-		local player = MySQL.Sync.fetchAll('SELECT * FROM players WHERE citizenid = ? LIMIT 1', { target })
+		local player = MySQL.query.await('SELECT * FROM players WHERE citizenid = ? LIMIT 1', { target })
 		if player[1] ~= nil then
 			Employee = player[1]
 			local job = {}
@@ -177,7 +177,7 @@ RegisterNetEvent('qbr-bossmenu:server:FireEmployee', function(target)
 			job.grade = {}
 			job.grade.name = nil
 			job.grade.level = 0
-			MySQL.Async.execute('UPDATE players SET job = ? WHERE citizenid = ?', { json.encode(job), target })
+			MySQL.query.await('UPDATE players SET job = ? WHERE citizenid = ?', { json.encode(job), target })
 			TriggerClientEvent('QBCore:Notify', src, 9, "Employee fired!", 2000, 0, 'hud_textures', 'check')
 			TriggerEvent("qbr-log:server:CreateLog", "bossmenu", "Job Fire", "red", Player.PlayerData.charinfo.firstname .. " " .. Player.PlayerData.charinfo.lastname .. ' successfully fired ' .. Employee.PlayerData.charinfo.firstname .. " " .. Employee.PlayerData.charinfo.lastname .. " (" .. Player.PlayerData.job.name .. ")", false)
 		else
