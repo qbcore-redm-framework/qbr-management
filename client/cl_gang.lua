@@ -9,18 +9,14 @@ local function CloseMenuFullGang()
 end
 
 local function DrawText3DGang(v, text)
+    local onScreen,_x,_y=GetScreenCoordFromWorldCoord(v.x,v.y,v.z)
+
     SetTextScale(0.35, 0.35)
-    SetTextFont(4)
-    SetTextProportional(1)
-    SetTextColour(255, 255, 255, 215)
-    SetTextEntry("STRING")
-    SetTextCentre(true)
-    AddTextComponentString(text)
-    SetDrawOrigin(v, 0)
-    DrawText(0.0, 0.0)
-    local factor = (string.len(text)) / 370
-    DrawRect(0.0, 0.0 + 0.0125, 0.017 + factor, 0.03, 0, 0, 0, 0)
-    ClearDrawOrigin()
+    SetTextFontForCurrentCommand(1)
+    SetTextColor(255, 255, 255, 215)
+    local str = CreateVarString(10, "LITERAL_STRING", text, Citizen.ResultAsLong())
+    SetTextCentre(1)
+    DisplayText(str,_x,_y)
 end
 
 local function comma_valueGang(amount)
